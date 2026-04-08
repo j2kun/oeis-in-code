@@ -122,7 +122,7 @@ def main():
         "--output", default="results.csv", help="Output CSV file (default: results.csv)"
     )
     parser.add_argument(
-        "--max-results",
+        "--max_results",
         type=int,
         default=1000000,
         help="Max number of GitHub search results to process (default: 100)",
@@ -144,7 +144,10 @@ def main():
     search_query = args.search_query
     print(f"GitHub search query: {search_query!r}", file=sys.stderr)
 
-    per_page = 100
+    if args.max_results < 100:
+        per_page = args.max_results
+    else:
+        per_page = 100
     max_pages = max(1, args.max_results // per_page)
 
     rows = []
