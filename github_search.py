@@ -106,7 +106,12 @@ def main():
         description="Search GitHub code for a regex and output CSV."
     )
     parser.add_argument(
-        "regex", help="Regular expression to search for (e.g. oeis.org/A)"
+        "--regex",
+        help="Regular expression to search for (e.g. oeis.org/A[0-9]+)",
+    )
+    parser.add_argument(
+        "--search_query",
+        help="Search query to use since GH doesn't support regex in search",
     )
     parser.add_argument(
         "--token",
@@ -136,7 +141,7 @@ def main():
         print(f"[ERROR] Invalid regex: {e}", file=sys.stderr)
         sys.exit(1)
 
-    search_query = args.regex
+    search_query = args.search_query
     print(f"GitHub search query: {search_query!r}", file=sys.stderr)
 
     per_page = 100
