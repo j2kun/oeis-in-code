@@ -20,7 +20,7 @@ import urllib.request
 import json
 
 
-def github_search_code(query: str, token: str, per_page: int = 100, max_pages: int = 10):
+def github_search_code(query: str, token: str, per_page: int, max_pages):
     """Yield raw code search result items from GitHub API."""
     headers = {
         "Accept": "application/vnd.github+json",
@@ -32,7 +32,9 @@ def github_search_code(query: str, token: str, per_page: int = 100, max_pages: i
     page = 1
     fetched = 0
     while page <= max_pages:
-        params = urllib.parse.urlencode({"q": query, "per_page": per_page, "page": page})
+        params = urllib.parse.urlencode(
+            {"q": query, "per_page": per_page, "page": page}
+        )
         url = f"https://api.github.com/search/code?{params}"
 
         req = urllib.request.Request(url, headers=headers)
@@ -43,7 +45,10 @@ def github_search_code(query: str, token: str, per_page: int = 100, max_pages: i
             body = e.read().decode()
             print(f"[ERROR] GitHub API {e.code}: {body}", file=sys.stderr)
             if e.code == 403:
-                print("[ERROR] Rate limited or forbidden. Supply a --token.", file=sys.stderr)
+                print(
+                    "[ERROR] Rate limited or forbidden. Supply a --token.",
+                    file=sys.stderr,
+                )
             break
 
         items = data.get("items", [])
@@ -54,7 +59,10 @@ def github_search_code(query: str, token: str, per_page: int = 100, max_pages: i
         fetched += len(items)
 
         total = data.get("total_count", 0)
-        print(f"  Fetched {fetched}/{min(total, max_pages * per_page)} results...", file=sys.stderr)
+        print(
+            f"  Fetched {fetched}/{min(total, max_pages * per_page)} results...",
+            file=sys.stderr,
+        )
 
         if fetched >= total:
             break
@@ -78,7 +86,9 @@ def fetch_file_content(repo_full_name: str, file_path: str, token: str) -> str |
         with urllib.request.urlopen(req) as resp:
             return resp.read().decode(errors="replace")
     except Exception as e:
-        print(f"[WARN] Could not fetch {repo_full_name}/{file_path}: {e}", file=sys.stderr)
+        print(
+            f"[WARN] Could not fetch {repo_full_name}/{file_path}: {e}", file=sys.stderr
+        )
         return None
 
 
@@ -91,19 +101,34 @@ def find_matches_in_content(content: str, pattern: re.Pattern) -> list[tuple[str
     return results
 
 
-
 def main():
-    parser = argparse.ArgumentParser(description="Search GitHub code for a regex and output CSV.")
-    parser.add_argument("regex", help="Regular expression to search for (e.g. oeis.org/A)")
-    parser.add_argument("--token", default=os.environ.get("GITHUB_TOKEN", ""),
-                        help="GitHub personal access token (or set GITHUB_TOKEN env var)")
-    parser.add_argument("--output", default="results.csv", help="Output CSV file (default: results.csv)")
-    parser.add_argument("--max-results", type=int, default=100,
-                        help="Max number of GitHub search results to process (default: 100)")
+    parser = argparse.ArgumentParser(
+        description="Search GitHub code for a regex and output CSV."
+    )
+    parser.add_argument(
+        "regex", help="Regular expression to search for (e.g. oeis.org/A)"
+    )
+    parser.add_argument(
+        "--token",
+        default=os.environ.get("GITHUB_TOKEN", ""),
+        help="GitHub personal access token (or set GITHUB_TOKEN env var)",
+    )
+    parser.add_argument(
+        "--output", default="results.csv", help="Output CSV file (default: results.csv)"
+    )
+    parser.add_argument(
+        "--max-results",
+        type=int,
+        default=1000000,
+        help="Max number of GitHub search results to process (default: 100)",
+    )
     args = parser.parse_args()
 
     if not args.token:
-        print("[WARN] No GitHub token provided. Unauthenticated requests are rate-limited to 10/min.", file=sys.stderr)
+        print(
+            "[WARN] No GitHub token provided. Unauthenticated requests are rate-limited to 10/min.",
+            file=sys.stderr,
+        )
 
     try:
         pattern = re.compile(args.regex)
@@ -114,13 +139,15 @@ def main():
     search_query = args.regex
     print(f"GitHub search query: {search_query!r}", file=sys.stderr)
 
-    per_page = min(100, args.max_results)
+    per_page = 100
     max_pages = max(1, args.max_results // per_page)
 
     rows = []
     seen_files = set()
 
-    for item in github_search_code(search_query, args.token, per_page=per_page, max_pages=max_pages):
+    for item in github_search_code(
+        search_query, args.token, per_page=per_page, max_pages=max_pages
+    ):
         repo = item["repository"]["full_name"]
         path = item["path"]
         key = (repo, path)
@@ -135,12 +162,14 @@ def main():
 
         matches = find_matches_in_content(content, pattern)
         for matched_str, lineno in matches:
-            rows.append({
-                "matched_string": matched_str,
-                "repository": repo,
-                "file_path": path,
-                "line_number": lineno,
-            })
+            rows.append(
+                {
+                    "matched_string": matched_str,
+                    "repository": repo,
+                    "file_path": path,
+                    "line_number": lineno,
+                }
+            )
 
         time.sleep(0.3)  # gentle rate limiting on contents API
 
