@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
 Analyze results.csv and print statistics about OEIS matches.
+
+Deduplicates matches by line content to avoid counting vendored/copied code
+multiple times.
 """
 
 import csv
 import os
-from collections import Counter
+from collections import Counter, defaultdict
 
 # Increase CSV field size limit for large content fields
 csv.field_size_limit(10 * 1024 * 1024)  # 10MB
@@ -23,23 +26,31 @@ def extract_oeis_number(matched_string):
     return None
 
 
-def print_match_details(details, max_display=10):
-    """Print details of matches with limit."""
-    total = len(details)
+def print_match_details(unique_lines_list, max_display=10):
+    """Print details of unique line matches with limit.
+
+    Args:
+        unique_lines_list: List of (line_content, [details]) tuples
+        max_display: Maximum number of unique lines to display
+    """
+    total = len(unique_lines_list)
     displayed = min(total, max_display)
 
-    for i, detail in enumerate(details[:max_display], 1):
-        print(f"   [{i}] Repository: {detail['repository']}")
-        print(f"       File: {detail['file_path']}")
-        print(f"       Line: {detail['line_number']}")
-        content = detail['line_content']
+    for i, (line_content, locations) in enumerate(unique_lines_list[:max_display], 1):
+        # Show the first location where this line appears
+        first_location = locations[0]
+        content = line_content
         if len(content) > 100:
             content = content[:97] + "..."
-        print(f"       Content: {content}")
+
+        print(f"   [{i}] Content: {content}")
+        print(f"       Found in {len(locations)} location(s)")
+        print(f"       Example: {first_location['repository']}")
+        print(f"                {first_location['file_path']}:{first_location['line_number']}")
         print()
 
     if total > displayed:
-        print(f"   ... and {total - displayed} more occurrences")
+        print(f"   ... and {total - displayed} more unique line(s)")
         print()
 
 
@@ -85,20 +96,17 @@ def main():
             if line:
                 repos_to_skip.add(line)
 
-    files_to_skip = set()
-    with open('files_to_skip.txt', 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                files_to_skip.add(line)
-
     # Read CSV and collect data
-    all_matches = []
-    all_matches_details = {}  # matched_string -> list of details
-    filtered_matches = []
-    filtered_matches_details = {}  # matched_string -> list of details
+    # Key change: deduplicate by line_content
+    # matched_string -> line_content -> [details]
+    all_matches_by_content = defaultdict(lambda: defaultdict(list))
+    filtered_matches_by_content = defaultdict(lambda: defaultdict(list))
     all_oeis_with_numbers = []  # List of (oeis_num, matched_string, detail)
     filtered_oeis_with_numbers = []  # List of (oeis_num, matched_string, detail)
+
+    # For raw statistics
+    total_raw_matches = 0
+    total_raw_filtered_matches = 0
 
     with open('results.csv', 'r') as f:
         reader = csv.DictReader(f)
@@ -106,19 +114,19 @@ def main():
             matched_string = row['matched_string']
             repository = row['repository']
             file_path = row['file_path']
+            line_content = row.get('line_content', '')
+
+            total_raw_matches += 1
 
             detail = {
                 'repository': repository,
                 'file_path': file_path,
                 'line_number': row.get('line_number', ''),
-                'line_content': row.get('line_content', '')
+                'line_content': line_content,
             }
 
-            # Collect for statistic 1
-            all_matches.append(matched_string)
-            if matched_string not in all_matches_details:
-                all_matches_details[matched_string] = []
-            all_matches_details[matched_string].append(detail)
+            # Collect for statistic 1 - deduplicated by line_content
+            all_matches_by_content[matched_string][line_content].append(detail)
 
             # Collect for statistic 2 (highest A numbers)
             oeis_num = extract_oeis_number(matched_string)
@@ -130,34 +138,45 @@ def main():
             if repository in repos_to_skip:
                 continue
 
-            # Skip if trailing filename is in files_to_skip
-            filename = os.path.basename(file_path)
-            if filename in files_to_skip:
-                continue
+            total_raw_filtered_matches += 1
 
-            filtered_matches.append(matched_string)
-            if matched_string not in filtered_matches_details:
-                filtered_matches_details[matched_string] = []
-            filtered_matches_details[matched_string].append(detail)
+            # Collect for filtered stats - deduplicated by line_content
+            filtered_matches_by_content[matched_string][line_content].append(detail)
 
             # Collect for highest OEIS numbers among filtered matches
             if oeis_num is not None:
                 filtered_oeis_with_numbers.append((oeis_num, matched_string, detail))
 
+    # Compute statistics based on unique line contents
+    # Count how many unique line contents each matched_string has
+    all_match_counts = {}
+    for matched_string, contents in all_matches_by_content.items():
+        all_match_counts[matched_string] = len(contents)  # Number of unique lines
+
+    filtered_match_counts = {}
+    for matched_string, contents in filtered_matches_by_content.items():
+        filtered_match_counts[matched_string] = len(contents)  # Number of unique lines
+
     # Compute statistics
     print("=" * 70)
-    print("OEIS Results Statistics")
+    print("OEIS Results Statistics (deduplicated by line content)")
     print("=" * 70)
     print()
 
-    # Statistic 1: Most common matched_string
-    if all_matches:
-        counter = Counter(all_matches)
-        most_common = counter.most_common(1)[0]
+    # Statistic 1: Most common matched_string (by unique line contents)
+    if all_match_counts:
+        most_common_match = max(all_match_counts.items(), key=lambda x: x[1])
+        matched_string, unique_count = most_common_match
+
+        # Get the unique lines for this matched_string
+        unique_lines = [(line, locs) for line, locs in all_matches_by_content[matched_string].items()]
+        # Sort by number of locations (most copied first)
+        unique_lines.sort(key=lambda x: len(x[1]), reverse=True)
+
         print(f"1. Most common matched_string among all matches:")
-        print(f"   {most_common[0]} (appears {most_common[1]} times)")
+        print(f"   {matched_string} ({unique_count} distinct line(s) of code)")
         print()
-        print_match_details(all_matches_details[most_common[0]])
+        print_match_details(unique_lines)
 
     # Statistic 2: Top 20 highest OEIS numbers from distinct repos
     if all_oeis_with_numbers:
@@ -166,30 +185,49 @@ def main():
         print()
         print_highest_matches(top_20)
 
-    # Statistic 3: Most common filtered matched_string
-    if filtered_matches:
-        counter = Counter(filtered_matches)
-        most_common = counter.most_common(1)[0]
+    # Statistic 3: Most common filtered matched_string (by unique line contents)
+    if filtered_match_counts:
+        most_common_filtered = max(filtered_match_counts.items(), key=lambda x: x[1])
+        matched_string, unique_count = most_common_filtered
+
+        # Get the unique lines for this matched_string
+        unique_lines = [(line, locs) for line, locs in filtered_matches_by_content[matched_string].items()]
+        # Sort by number of locations (most copied first)
+        unique_lines.sort(key=lambda x: len(x[1]), reverse=True)
+
         print(f"3. Most common matched_string (filtered):")
-        print(f"   Excludes repos in repos_to_skip.txt and files in files_to_skip.txt")
-        print(f"   {most_common[0]} (appears {most_common[1]} times)")
+        print(f"   Excludes repos in repos_to_skip.txt")
+        print(f"   {matched_string} ({unique_count} distinct line(s) of code)")
         print()
-        print_match_details(filtered_matches_details[most_common[0]])
+        print_match_details(unique_lines)
 
     # Statistic 4: Top 20 highest OEIS numbers (filtered) from distinct repos
     if filtered_oeis_with_numbers:
         top_20_filtered = get_top_n_from_distinct_repos(filtered_oeis_with_numbers, 20)
         print(f"4. Top 20 highest matched_strings (filtered, by A number, distinct repos):")
-        print(f"   Excludes repos in repos_to_skip.txt and files in files_to_skip.txt")
+        print(f"   Excludes repos in repos_to_skip.txt")
         print()
         print_highest_matches(top_20_filtered)
 
     # Additional summary
     print("=" * 70)
-    print(f"Total matches: {len(all_matches)}")
-    print(f"Total matches after filtering: {len(filtered_matches)}")
-    print(f"Unique matched_strings: {len(set(all_matches))}")
-    print(f"Unique matched_strings (filtered): {len(set(filtered_matches))}")
+    print("Summary:")
+    print("=" * 70)
+    print(f"Total raw matches in CSV: {total_raw_matches}")
+    print(f"Total raw matches after filtering: {total_raw_filtered_matches}")
+    print()
+    print("After deduplication by line content:")
+
+    # Count total unique (matched_string, line_content) pairs
+    total_unique_uses = sum(len(contents) for contents in all_matches_by_content.values())
+    total_unique_uses_filtered = sum(len(contents) for contents in filtered_matches_by_content.values())
+
+    print(f"  Unique uses (matched_string + line combos): {total_unique_uses}")
+    print(f"  Unique uses after filtering: {total_unique_uses_filtered}")
+    print(f"  Unique OEIS sequences referenced: {len(all_matches_by_content)}")
+    print(f"  Unique OEIS sequences (filtered): {len(filtered_matches_by_content)}")
+    print()
+    print(f"Deduplication saved counting {total_raw_matches - total_unique_uses} duplicate lines")
     print("=" * 70)
 
 

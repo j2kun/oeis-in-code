@@ -2,6 +2,7 @@ github.com/AnasImloul/Leetcode-Solutions
 github.com/EFanZh/LeetCode
 github.com/EndlessCheng/codeforces-go
 github.com/InverseIntegral/ctf_writeups
+github.com/TheAlgorithms/C-Sharp
 github.com/Voltara/advent2020-fast
 github.com/acmeism/RosettaCodeData
 github.com/ad-si/RosettaGit
@@ -12,10 +13,14 @@ github.com/charles-wangkai/codechef
 github.com/charles-wangkai/codeforces
 github.com/code-golf/code-golf
 github.com/gdut-yy/leetcode-hub-java
+github.com/hakank/hakank
 github.com/hqztrue/LeetCodeSolutions
 github.com/illuz/leetcode
+github.com/loda-lang/loda-cpp
+github.com/loda-lang/loda-rust
 github.com/lzl124631x/LeetCode
 github.com/maneatingape/advent-of-code-rust
+github.com/manwar/perlweeklychallenge-club
 github.com/oeis/oeisdata
 github.com/p4-team/ctf
 github.com/redsun9/leetcode
@@ -24,5 +29,7 @@ github.com/rosa/advent-of-code
 github.com/sajjadium/ctf-archives
 github.com/sasdf/ctf
 github.com/sim642/adventofcode
+github.com/teorth/erdosproblems
+github.com/trizen/perl-scripts
 github.com/wimglenn/advent-of-code-wim
 github.com/xavdid/advent-of-code
