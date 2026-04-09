@@ -550,6 +550,258 @@ const refUrl = "https://oeis.org/A000045";
   See also: oeis.org/A256111, oeis.org/A297346, oeis.org/A297347
   ```
 
+## 5. Sample of Unique Sequences
+
+*OEIS sequences that appear exactly once in the entire filtered dataset*
+
+- Total unique sequences: **627**
+  - With OEIS number: **627**
+  - Without OEIS number: **0**
+
+### Top 15 by OEIS Number
+
+**[1]** [oeis.org/A390257](oeis.org/A390257) (A390257)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/82.md:6`
+- Content:
+  ```
+  - **OEIS:** [A120414](https://oeis.org/A120414), [A390256](https://oeis.org/A390256), [A390257](h...
+  ```
+
+**[2]** [oeis.org/A390256](oeis.org/A390256) (A390256)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/82.md:6`
+- Content:
+  ```
+  - **OEIS:** [A120414](https://oeis.org/A120414), [A390256](https://oeis.org/A390256), [A390257](h...
+  ```
+
+**[3]** [oeis.org/A387053](oeis.org/A387053) (A387053)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/10.md:7`
+- Content:
+  ```
+  - **OEIS:** [A387053](https://oeis.org/A387053)
+  ```
+
+**[4]** [oeis.org/A386439](oeis.org/A386439) (A386439)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/easy/168.md:7`
+- Content:
+  ```
+  - **OEIS:** [A004059](https://oeis.org/A004059), [A057561](https://oeis.org/A057561), [A094708](h...
+  ```
+
+**[5]** [oeis.org/A382397](oeis.org/A382397) (A382397)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/156.md:6`
+- Content:
+  ```
+  - **OEIS:** [A382397](https://oeis.org/A382397)
+  ```
+
+**[6]** [oeis.org/A377587](oeis.org/A377587) (A377587)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/11.md:7`
+- Content:
+  ```
+  - **OEIS:** [A001220](https://oeis.org/A001220), [A377587](https://oeis.org/A377587)
+  ```
+
+**[7]** [oeis.org/A376620](oeis.org/A376620) (A376620)
+- Repository: `github.com/teorth/equational_theories`
+- File: `blueprint/src/chapter/intro.tex:186`
+- Content:
+  ```
+  (\href{https://oeis.org/A376620}{OEIS A376620}).
+  ```
+
+**[8]** [oeis.org/A375779](oeis.org/A375779) (A375779)
+- Repository: `github.com/deepinv/deepinv`
+- File: `deepinv/physics/generator/zernike.py:201`
+- Content:
+  ```
+  # The formula is taken from: https://oeis.org/A375779/a375779.pdf
+  ```
+
+**[9]** [oeis.org/A372698](oeis.org/A372698) (A372698)
+- Repository: `github.com/zzllrr/mather`
+- File: `js/obj/math/prime.js:277`
+- Content:
+  ```
+  对应数列	oeis.org/A372698
+  ```
+
+**[10]** [oeis.org/A367090](oeis.org/A367090) (A367090)
+- Repository: `github.com/dust-tt/srchd`
+- File: `problems/erdos/open/125.md:7`
+- Content:
+  ```
+  - **OEIS:** [A367090](https://oeis.org/A367090)
+  ```
+
+**[11]** [oeis.org/A359492](oeis.org/A359492) (A359492)
+- Repository: `github.com/trizen/sidef`
+- File: `NUMBER_THEORY_REFERENCE.md:1430`
+- Content:
+  ```
+  **[A359492](https://oeis.org/A359492)**: $a(n)$ is the least number of the form $p^2 + q^2 - 2$ f...
+  ```
+
+**[12]** [oeis.org/A359070](oeis.org/A359070) (A359070)
+- Repository: `github.com/trizen/sidef`
+- File: `NUMBER_THEORY_REFERENCE.md:1044`
+- Content:
+  ```
+  **[A359070](https://oeis.org/A359070)**: Smallest $k > 1$ such that $k^n - 1$ is the product of $...
+  ```
+
+**[13]** [oeis.org/A358865](oeis.org/A358865) (A358865)
+- Repository: `github.com/trizen/sidef`
+- File: `NUMBER_THEORY_REFERENCE.md:1159`
+- Content:
+  ```
+  **[A358865](https://oeis.org/A358865)**: $a(n)$ is the smallest n-gonal pyramidal number with exa...
+  ```
+
+**[14]** [oeis.org/A358864](oeis.org/A358864) (A358864)
+- Repository: `github.com/trizen/sidef`
+- File: `NUMBER_THEORY_REFERENCE.md:1208`
+- Content:
+  ```
+  **[A358864](https://oeis.org/A358864)**: $a(n)$ is the smallest n-gonal pyramidal number with exa...
+  ```
+
+**[15]** [oeis.org/A358862](oeis.org/A358862) (A358862)
+- Repository: `github.com/trizen/sidef`
+- File: `NUMBER_THEORY_REFERENCE.md:1175`
+- Content:
+  ```
+  **[A358862](https://oeis.org/A358862)**: $a(n)$ is the smallest n-gonal number with exactly $n$ d...
+  ```
+
+### Lowest 15 by OEIS Number
+
+**[1]** [oeis.org/A000004](oeis.org/A000004) (A000004)
+- Repository: `github.com/UniMath/agda-unimath`
+- File: `src/literature/oeis.lagda.md:42`
+- Content:
+  ```
+  OEIS: [A000004](https://oeis.org/A000004)
+  ```
+
+**[2]** [oeis.org/A000007](oeis.org/A000007) (A000007)
+- Repository: `github.com/UniMath/agda-unimath`
+- File: `src/literature/oeis.lagda.md:51`
+- Content:
+  ```
+  OEIS: [A000007](https://oeis.org/A000007)
+  ```
+
+**[3]** [oeis.org/A000008](oeis.org/A000008) (A000008)
+- Repository: `github.com/oscar-system/Oscar.jl`
+- File: `test/Combinatorics/EnumerativeCombinatorics/partitions.jl:192`
+- Content:
+  ```
+  # From https://oeis.org/A000008
+  ```
+
+**[4]** [oeis.org/A000012](oeis.org/A000012) (A000012)
+- Repository: `github.com/UniMath/agda-unimath`
+- File: `src/literature/oeis.lagda.md:70`
+- Content:
+  ```
+  OEIS: [A000012](https://oeis.org/A000012)
+  ```
+
+**[5]** [oeis.org/A000014](oeis.org/A000014) (A000014)
+- Repository: `github.com/networkx/nx-guides`
+- File: `content/applications/goodwillhunting.md:186`
+- Content:
+  ```
+  [a000014]: https://oeis.org/A000014
+  ```
+
+**[6]** [oeis.org/A000026](oeis.org/A000026) (A000026)
+- Repository: `github.com/apachecn/geeksforgeeks-dsal-zh`
+- File: `docs/find-the-nth-mosaic-number.md:4`
+- Content:
+  ```
+  给定一个整数 **N** ，任务是找到**N<sup>th</sup>T5[马赛克号](http://oeis.org/A000026)。一个马赛克号可以表示如下:
+  ```
+
+**[7]** [oeis.org/A41](oeis.org/A41) (A000041)
+- Repository: `github.com/google-deepmind/formal-conjectures`
+- File: `FormalConjectures/OEIS/41.lean:25`
+- Content:
+  ```
+  *Reference*: [A41](https://oeis.org/A41)
+  ```
+
+**[8]** [oeis.org/A000084](oeis.org/A000084) (A000084)
+- Repository: `github.com/yhx-12243/OI-transit`
+- File: `records/loj6389.html:56`
+- Content:
+  ```
+  <p>(花絮：序列 $f_n$ 和 $c_n$ 分别位于 OEIS 的 <a href="http://oeis.org/A000084" target="_blank">A000084</a>...
+  ```
+
+**[9]** [oeis.org/A000105](oeis.org/A000105) (A000105)
+- Repository: `github.com/edemaine/topp`
+- File: `topp.bib:2321`
+- Content:
+  ```
+  "\url{https://oeis.org/A000105}"
+  ```
+
+**[10]** [oeis.org/A000124](oeis.org/A000124) (A000124)
+- Repository: `github.com/markrogoyski/math-php`
+- File: `src/Sequence/Advanced.php:378`
+- Content:
+  ```
+  * https://oeis.org/A000124
+  ```
+
+**[11]** [oeis.org/A129](oeis.org/A129) (A000129)
+- Repository: `github.com/google-deepmind/formal-conjectures`
+- File: `FormalConjectures/Wikipedia/Pell.lean:26`
+- Content:
+  ```
+  $P_1 = 1$, $P_{n+2} = 2*P_{n+1} + P_n$. [OEIS A129](https://oeis.org/A129)
+  ```
+
+**[12]** [oeis.org/A000169](oeis.org/A000169) (A000169)
+- Repository: `github.com/OI-wiki/OI-wiki`
+- File: `docs/math/combinatorics/graph-enumeration.md:254`
+- Content:
+  ```
+  -   有标号有根树 [A000169](https://oeis.org/A000169)．
+  ```
+
+**[13]** [oeis.org/A000220](oeis.org/A000220) (A000220)
+- Repository: `github.com/maspypy/library`
+- File: `enumerate/asymmetric_unlabeled_tree.hpp:2`
+- Content:
+  ```
+  // https://oeis.org/A000220
+  ```
+
+**[14]** [oeis.org/A000251](oeis.org/A000251) (A000251)
+- Repository: `github.com/GCWizard/GCWizard`
+- File: `lib/tools/science_and_technology/number_sequences/_common/logic/number_sequence.dart:4`
+- Content:
+  ```
+  // https://oeis.org/A000251   Fermat
+  ```
+
+**[15]** [oeis.org/A000255](oeis.org/A000255) (A000255)
+- Repository: `github.com/apachecn/geeksforgeeks-dsal-zh`
+- File: `docs/count-number-of-permutation-of-an-array-having-no-subarray-of-size-two-or-more-from-original-array.md:257`
+- Content:
+  ```
+  **注:**以上复发可查[oeis.org](https://oeis.org/A000255)。
+  ```
+
 ---
 
 ## Summary

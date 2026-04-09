@@ -233,6 +233,94 @@ def main():
         print()
         print_highest_matches(top_20_filtered)
 
+    # Statistic 5: Sample of unique sequences (appear only once in entire dataset)
+    # Find matched_strings (OEIS sequences) that appear only once total
+    unique_sequence_matches = []
+    for matched_string, contents in filtered_matches_by_content.items():
+        # Count total occurrences of this sequence across all line contents
+        total_occurrences = sum(len(locations) for locations in contents.values())
+
+        if total_occurrences == 1:
+            # This OEIS sequence appears only once in the entire filtered dataset
+            oeis_num = extract_oeis_number(matched_string)
+            # Get the single line content and location
+            line_content = list(contents.keys())[0]
+            detail = contents[line_content][0]
+
+            unique_sequence_matches.append({
+                'matched_string': matched_string,
+                'oeis_num': oeis_num,
+                'line_content': line_content,
+                'detail': detail
+            })
+
+    if unique_sequence_matches:
+        # Separate into with/without OEIS numbers for sorting
+        with_numbers = [m for m in unique_sequence_matches if m['oeis_num'] is not None]
+        without_numbers = [m for m in unique_sequence_matches if m['oeis_num'] is None]
+
+        print(f"## 5. Sample of Unique Sequences")
+        print()
+        print("*OEIS sequences that appear exactly once in the entire filtered dataset*")
+        print()
+        print(f"- Total unique sequences: **{len(unique_sequence_matches)}**")
+        print(f"  - With OEIS number: **{len(with_numbers)}**")
+        print(f"  - Without OEIS number: **{len(without_numbers)}**")
+        print()
+
+        if with_numbers:
+            # Sort by OEIS number (descending) to show interesting/high sequences
+            with_numbers.sort(key=lambda x: x['oeis_num'], reverse=True)
+
+            # Display top 15 by OEIS number
+            sample_size = min(15, len(with_numbers))
+            print(f"### Top {sample_size} by OEIS Number")
+            print()
+
+            for i, match in enumerate(with_numbers[:sample_size], 1):
+                matched_string = match['matched_string']
+                oeis_num = match['oeis_num']
+                detail = match['detail']
+                line_content = match['line_content']
+
+                print(f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})")
+                print(f"- Repository: `{detail['repository']}`")
+                print(f"- File: `{detail['file_path']}:{detail['line_number']}`")
+                content = line_content
+                if len(content) > 100:
+                    content = content[:97] + "..."
+                print(f"- Content:")
+                print(f"  ```")
+                print(f"  {content}")
+                print(f"  ```")
+                print()
+
+            # Display bottom 15 by OEIS number (lowest numbers)
+            sample_size_low = min(15, len(with_numbers))
+            print(f"### Lowest {sample_size_low} by OEIS Number")
+            print()
+
+            # Sort ascending for lowest
+            with_numbers.sort(key=lambda x: x['oeis_num'])
+
+            for i, match in enumerate(with_numbers[:sample_size_low], 1):
+                matched_string = match['matched_string']
+                oeis_num = match['oeis_num']
+                detail = match['detail']
+                line_content = match['line_content']
+
+                print(f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})")
+                print(f"- Repository: `{detail['repository']}`")
+                print(f"- File: `{detail['file_path']}:{detail['line_number']}`")
+                content = line_content
+                if len(content) > 100:
+                    content = content[:97] + "..."
+                print(f"- Content:")
+                print(f"  ```")
+                print(f"  {content}")
+                print(f"  ```")
+                print()
+
     # Additional summary
     print("---")
     print()
