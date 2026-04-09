@@ -1,4 +1,3 @@
-======================================================================
 OEIS Results Statistics (deduplicated by line content)
 ======================================================================
 
@@ -358,7 +357,6 @@ OEIS Results Statistics (deduplicated by line content)
        Line: 19
        Content: See also: oeis.org/A256111, oeis.org/A297346, oeis.org/A297347
 
-======================================================================
 Summary:
 ======================================================================
 Total raw matches in CSV: 10798
@@ -369,6 +367,3 @@ After deduplication by line content:
   Unique uses after filtering: 2317
   Unique OEIS sequences referenced: 2643
   Unique OEIS sequences (filtered): 1126
-
-Deduplication saved counting 5469 duplicate lines
-======================================================================
