@@ -16,9 +16,9 @@ csv.field_size_limit(10 * 1024 * 1024)  # 10MB
 
 def extract_oeis_number(matched_string):
     """Extract the numeric part after 'A' from oeis.org/AXXXXXX format."""
-    if '/A' in matched_string:
+    if "/A" in matched_string:
         # Extract everything after '/A'
-        num_str = matched_string.split('/A')[1]
+        num_str = matched_string.split("/A")[1]
         try:
             return int(num_str)
         except ValueError:
@@ -66,7 +66,7 @@ def get_top_n_from_distinct_repos(oeis_list, n=20):
     seen_repos = set()
     result = []
     for oeis_num, matched_string, detail in sorted_list:
-        repo = detail['repository']
+        repo = detail["repository"]
         if repo not in seen_repos:
             seen_repos.add(repo)
             result.append((oeis_num, matched_string, detail))
@@ -83,7 +83,7 @@ def print_highest_matches(highest_list):
         print(f"- Repository: `{detail['repository']}`")
         print(f"- File: `{detail['file_path']}`")
         print(f"- Line: `{detail['line_number']}`")
-        content = detail['line_content']
+        content = detail["line_content"]
         if len(content) > 100:
             content = content[:97] + "..."
         print(f"- Content:")
@@ -96,7 +96,7 @@ def print_highest_matches(highest_list):
 def main():
     # Read skip files
     repos_to_skip = set()
-    with open('repos_to_skip.txt', 'r') as f:
+    with open("repos_to_skip.txt", "r") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -114,21 +114,21 @@ def main():
     total_raw_matches = 0
     total_raw_filtered_matches = 0
 
-    with open('results.csv', 'r') as f:
+    with open("results.csv", "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            matched_string = row['matched_string']
-            repository = row['repository']
-            file_path = row['file_path']
-            line_content = row.get('line_content', '')
+            matched_string = row["matched_string"]
+            repository = row["repository"]
+            file_path = row["file_path"]
+            line_content = row.get("line_content", "")
 
             total_raw_matches += 1
 
             detail = {
-                'repository': repository,
-                'file_path': file_path,
-                'line_number': row.get('line_number', ''),
-                'line_content': line_content,
+                "repository": repository,
+                "file_path": file_path,
+                "line_number": row.get("line_number", ""),
+                "line_content": line_content,
             }
 
             # Collect for statistic 1 - deduplicated by line_content
@@ -177,7 +177,10 @@ def main():
         matched_string, unique_count = most_common_match
 
         # Get the unique lines for this matched_string
-        unique_lines = [(line, locs) for line, locs in all_matches_by_content[matched_string].items()]
+        unique_lines = [
+            (line, locs)
+            for line, locs in all_matches_by_content[matched_string].items()
+        ]
         # Sort by number of locations (most copied first)
         unique_lines.sort(key=lambda x: len(x[1]), reverse=True)
 
@@ -204,7 +207,10 @@ def main():
         matched_string, unique_count = most_common_filtered
 
         # Get the unique lines for this matched_string
-        unique_lines = [(line, locs) for line, locs in filtered_matches_by_content[matched_string].items()]
+        unique_lines = [
+            (line, locs)
+            for line, locs in filtered_matches_by_content[matched_string].items()
+        ]
         # Sort by number of locations (most copied first)
         unique_lines.sort(key=lambda x: len(x[1]), reverse=True)
 
@@ -234,8 +240,12 @@ def main():
     print()
 
     # Count total unique (matched_string, line_content) pairs
-    total_unique_uses = sum(len(contents) for contents in all_matches_by_content.values())
-    total_unique_uses_filtered = sum(len(contents) for contents in filtered_matches_by_content.values())
+    total_unique_uses = sum(
+        len(contents) for contents in all_matches_by_content.values()
+    )
+    total_unique_uses_filtered = sum(
+        len(contents) for contents in filtered_matches_by_content.values()
+    )
 
     print("### Raw Matches")
     print()
@@ -249,8 +259,10 @@ def main():
     print(f"- Unique OEIS sequences referenced: **{len(all_matches_by_content)}**")
     print(f"- Unique OEIS sequences (filtered): **{len(filtered_matches_by_content)}**")
     print()
-    print(f"**Deduplication saved counting {total_raw_matches - total_unique_uses} duplicate lines**")
+    print(
+        f"**Deduplication saved counting {total_raw_matches - total_unique_uses} duplicate lines**"
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

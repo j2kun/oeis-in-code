@@ -32,7 +32,10 @@ output_file = None
 def signal_handler(sig, frame):
     """Handle Ctrl-C gracefully by marking for shutdown."""
     global should_exit
-    print("\n\n[INFO] Interrupt received. Will save and exit after current operation...", file=sys.stderr)
+    print(
+        "\n\n[INFO] Interrupt received. Will save and exit after current operation...",
+        file=sys.stderr,
+    )
     should_exit = True
 
 
@@ -41,15 +44,20 @@ def search_sourcegraph(query: str, pattern: re.Pattern) -> list[dict]:
     Search Sourcegraph using streaming API and extract matches.
     Returns list of match dictionaries.
     """
-    params = urllib.parse.urlencode({
-        "q": query,
-        "v": "V3",
-    })
+    params = urllib.parse.urlencode(
+        {
+            "q": query,
+            "v": "V3",
+        }
+    )
     url = f"https://sourcegraph.com/.api/search/stream?{params}"
 
     req = urllib.request.Request(url)
     req.add_header("Accept", "text/event-stream")
-    req.add_header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    req.add_header(
+        "User-Agent",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    )
 
     matches = []
 
@@ -62,65 +70,80 @@ def search_sourcegraph(query: str, pattern: re.Pattern) -> list[dict]:
                 if should_exit:
                     break
 
-                line = line.decode('utf-8').rstrip('\n')
+                line = line.decode("utf-8").rstrip("\n")
 
-                if line.startswith('event: '):
+                if line.startswith("event: "):
                     event_type = line[7:]
-                elif line.startswith('data: '):
+                elif line.startswith("data: "):
                     data_lines.append(line[6:])
-                elif line == '':
+                elif line == "":
                     # End of event
                     if event_type and data_lines:
-                        data = '\n'.join(data_lines)
+                        data = "\n".join(data_lines)
                         try:
                             event_data = json.loads(data)
 
-                            if event_type == 'matches':
+                            if event_type == "matches":
                                 for match in event_data:
-                                    match_type = match.get('type')
+                                    match_type = match.get("type")
 
-                                    if match_type == 'content':
+                                    if match_type == "content":
                                         # Extract matches from content match
-                                        repo = match.get('repository')
-                                        path = match.get('path')
+                                        repo = match.get("repository")
+                                        path = match.get("path")
 
                                         # Get line matches
-                                        line_matches = match.get('lineMatches', [])
+                                        line_matches = match.get("lineMatches", [])
                                         for line_match in line_matches:
-                                            line_number = line_match.get('lineNumber', 0)
-                                            line_text = line_match.get('line', '')
+                                            line_number = line_match.get(
+                                                "lineNumber", 0
+                                            )
+                                            line_text = line_match.get("line", "")
 
                                             # Apply regex to extract actual matches
-                                            for regex_match in pattern.finditer(line_text):
-                                                matches.append({
-                                                    'matched_string': regex_match.group(0),
-                                                    'repository': repo,
-                                                    'file_path': path,
-                                                    'line_number': line_number,
-                                                    'line_content': line_text.strip()
-                                                })
+                                            for regex_match in pattern.finditer(
+                                                line_text
+                                            ):
+                                                matches.append(
+                                                    {
+                                                        "matched_string": regex_match.group(
+                                                            0
+                                                        ),
+                                                        "repository": repo,
+                                                        "file_path": path,
+                                                        "line_number": line_number,
+                                                        "line_content": line_text.strip(),
+                                                    }
+                                                )
 
-                                    elif match_type == 'path':
+                                    elif match_type == "path":
                                         # Path matches - apply regex to the path
-                                        repo = match.get('repository')
-                                        path = match.get('path')
+                                        repo = match.get("repository")
+                                        path = match.get("path")
 
                                         for regex_match in pattern.finditer(path):
-                                            matches.append({
-                                                'matched_string': regex_match.group(0),
-                                                'repository': repo,
-                                                'file_path': path,
-                                                'line_number': 0,  # No specific line for path matches
-                                                'line_content': ''  # No line content for path matches
-                                            })
+                                            matches.append(
+                                                {
+                                                    "matched_string": regex_match.group(
+                                                        0
+                                                    ),
+                                                    "repository": repo,
+                                                    "file_path": path,
+                                                    "line_number": 0,  # No specific line for path matches
+                                                    "line_content": "",  # No line content for path matches
+                                                }
+                                            )
 
-                            elif event_type == 'progress':
+                            elif event_type == "progress":
                                 stats = event_data
-                                match_count = stats.get('matchCount', 0)
+                                match_count = stats.get("matchCount", 0)
                                 if match_count > 0:
-                                    print(f"    Progress: {match_count} matches found so far...", file=sys.stderr)
+                                    print(
+                                        f"    Progress: {match_count} matches found so far...",
+                                        file=sys.stderr,
+                                    )
 
-                            elif event_type == 'done':
+                            elif event_type == "done":
                                 print(f"    Search complete", file=sys.stderr)
 
                         except json.JSONDecodeError:
@@ -143,7 +166,7 @@ def search_sourcegraph(query: str, pattern: re.Pattern) -> list[dict]:
 def read_repos_file(filename: str) -> list[str]:
     """Read list of repositories from a file."""
     try:
-        with open(filename, 'r', encoding='utf-8') as f:
+        with open(filename, "r", encoding="utf-8") as f:
             repos = [line.strip() for line in f if line.strip()]
         print(f"[INFO] Loaded {len(repos)} repos from {filename}", file=sys.stderr)
         return repos
@@ -167,17 +190,23 @@ def read_existing_results(filename: str) -> tuple[list[dict], set[str]]:
     processed_repos = set()
 
     try:
-        with open(filename, 'r', encoding='utf-8') as f:
+        with open(filename, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 # Handle old CSV format without line_content field
-                if 'line_content' not in row:
-                    row['line_content'] = ''
+                if "line_content" not in row:
+                    row["line_content"] = ""
                 rows.append(row)
-                processed_repos.add(row['repository'])
+                processed_repos.add(row["repository"])
 
-        print(f"[INFO] Loaded {len(rows)} existing results from {filename}", file=sys.stderr)
-        print(f"[INFO] Found {len(processed_repos)} already processed repos", file=sys.stderr)
+        print(
+            f"[INFO] Loaded {len(rows)} existing results from {filename}",
+            file=sys.stderr,
+        )
+        print(
+            f"[INFO] Found {len(processed_repos)} already processed repos",
+            file=sys.stderr,
+        )
     except Exception as e:
         print(f"[WARN] Error reading existing results: {e}", file=sys.stderr)
         return [], set()
@@ -191,7 +220,13 @@ def write_results(filename: str, rows: list[dict]):
         print("[INFO] No results to write.", file=sys.stderr)
         return
 
-    fieldnames = ["matched_string", "repository", "file_path", "line_number", "line_content"]
+    fieldnames = [
+        "matched_string",
+        "repository",
+        "file_path",
+        "line_number",
+        "line_content",
+    ]
     try:
         with open(filename, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -296,7 +331,9 @@ def main():
                 print(f"\n[INFO] Stopping at user request.", file=sys.stderr)
                 break
 
-            print(f"\n[{i}/{len(unprocessed_repos)}] Processing: {repo}", file=sys.stderr)
+            print(
+                f"\n[{i}/{len(unprocessed_repos)}] Processing: {repo}", file=sys.stderr
+            )
 
             try:
                 repo_results = process_repo(repo, args.search_query, pattern)
@@ -304,13 +341,17 @@ def main():
 
                 # Periodically save results
                 if i % args.checkpoint_interval == 0:
-                    print(f"\n[CHECKPOINT] Saving results after {i} repos...", file=sys.stderr)
+                    print(
+                        f"\n[CHECKPOINT] Saving results after {i} repos...",
+                        file=sys.stderr,
+                    )
                     write_results(args.output, results_data)
 
             except Exception as e:
                 print(f"[ERROR] Error processing {repo}: {e}", file=sys.stderr)
                 print(f"[INFO] Continuing to next repo...", file=sys.stderr)
                 import traceback
+
                 traceback.print_exc(file=sys.stderr)
                 continue
 
@@ -324,6 +365,7 @@ def main():
     except Exception as e:
         print(f"\n[ERROR] Unexpected error: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc(file=sys.stderr)
 
     finally:
@@ -335,7 +377,10 @@ def main():
             print("[INFO] Exiting due to interrupt.", file=sys.stderr)
             sys.exit(130)  # Standard exit code for SIGINT
 
-        print(f"\n[SUCCESS] Processing complete! Total results: {len(results_data)}", file=sys.stderr)
+        print(
+            f"\n[SUCCESS] Processing complete! Total results: {len(results_data)}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":
