@@ -48,7 +48,8 @@ def print_match_details(unique_lines_list, max_display=10):
         print(f"{content}")
         print(f"```")
         print(f"- Found in **{len(locations)}** location(s)")
-        print(f"- Example: `{first_location['repository']}`")
+        link = first_location["repository"]
+        print(f"- Example: [{link}](https://{link})")
         print(f"  - `{first_location['file_path']}:{first_location['line_number']}`")
         print()
 
@@ -165,9 +166,6 @@ def main():
 
     # Compute statistics
     print("# OEIS Results Statistics")
-    print()
-    print("*Deduplicated by line content*")
-    print()
     print("---")
     print()
 
@@ -247,21 +245,25 @@ def main():
             line_content = list(contents.keys())[0]
             detail = contents[line_content][0]
 
-            unique_sequence_matches.append({
-                'matched_string': matched_string,
-                'oeis_num': oeis_num,
-                'line_content': line_content,
-                'detail': detail
-            })
+            unique_sequence_matches.append(
+                {
+                    "matched_string": matched_string,
+                    "oeis_num": oeis_num,
+                    "line_content": line_content,
+                    "detail": detail,
+                }
+            )
 
     if unique_sequence_matches:
         # Separate into with/without OEIS numbers for sorting
-        with_numbers = [m for m in unique_sequence_matches if m['oeis_num'] is not None]
-        without_numbers = [m for m in unique_sequence_matches if m['oeis_num'] is None]
+        with_numbers = [m for m in unique_sequence_matches if m["oeis_num"] is not None]
+        without_numbers = [m for m in unique_sequence_matches if m["oeis_num"] is None]
 
         print(f"## 5. Sample of Unique Sequences")
         print()
-        print("*OEIS sequences that appear exactly once in the entire filtered dataset*")
+        print(
+            "*OEIS sequences that appear exactly once in the entire filtered dataset*"
+        )
         print()
         print(f"- Total unique sequences: **{len(unique_sequence_matches)}**")
         print(f"  - With OEIS number: **{len(with_numbers)}**")
@@ -270,7 +272,7 @@ def main():
 
         if with_numbers:
             # Sort by OEIS number (descending) to show interesting/high sequences
-            with_numbers.sort(key=lambda x: x['oeis_num'], reverse=True)
+            with_numbers.sort(key=lambda x: x["oeis_num"], reverse=True)
 
             # Display top 15 by OEIS number
             sample_size = min(15, len(with_numbers))
@@ -278,12 +280,14 @@ def main():
             print()
 
             for i, match in enumerate(with_numbers[:sample_size], 1):
-                matched_string = match['matched_string']
-                oeis_num = match['oeis_num']
-                detail = match['detail']
-                line_content = match['line_content']
+                matched_string = match["matched_string"]
+                oeis_num = match["oeis_num"]
+                detail = match["detail"]
+                line_content = match["line_content"]
 
-                print(f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})")
+                print(
+                    f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})"
+                )
                 print(f"- Repository: `{detail['repository']}`")
                 print(f"- File: `{detail['file_path']}:{detail['line_number']}`")
                 content = line_content
@@ -301,15 +305,17 @@ def main():
             print()
 
             # Sort ascending for lowest
-            with_numbers.sort(key=lambda x: x['oeis_num'])
+            with_numbers.sort(key=lambda x: x["oeis_num"])
 
             for i, match in enumerate(with_numbers[:sample_size_low], 1):
-                matched_string = match['matched_string']
-                oeis_num = match['oeis_num']
-                detail = match['detail']
-                line_content = match['line_content']
+                matched_string = match["matched_string"]
+                oeis_num = match["oeis_num"]
+                detail = match["detail"]
+                line_content = match["line_content"]
 
-                print(f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})")
+                print(
+                    f"**[{i}]** [{matched_string}]({matched_string}) (A{oeis_num:06d})"
+                )
                 print(f"- Repository: `{detail['repository']}`")
                 print(f"- File: `{detail['file_path']}:{detail['line_number']}`")
                 content = line_content
